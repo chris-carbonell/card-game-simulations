@@ -26,6 +26,14 @@ from game.player import *
 # constants
 from constants import *
 
+# Setup
+
+# specify players to test
+PLAYERS = [
+    PlayerRandom(),
+    PlayerModal(),
+]
+
 # Funcs
 
 def play_one_game(player, con):
@@ -118,7 +126,7 @@ if __name__ == "__main__":
         # with a pool executor
         # loop over players and number of simulations
         with ThreadPoolExecutor(max_workers = MAX_WORKERS) as executor:
-            for idx, player in enumerate(players):
+            for player in PLAYERS:
                 for i in range(NUM_SIMULATIONS):
 
                     # play one game
