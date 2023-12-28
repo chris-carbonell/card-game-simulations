@@ -1,0 +1,10 @@
+# db
+Jinja2
+psycopg2
+SQLAlchemy
+
+# game
+pydealer
+
+# stats
+pandas
