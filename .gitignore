@@ -5,3 +5,8 @@
 app/working
 app/copy_to_prod.sh
 db/data
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class
