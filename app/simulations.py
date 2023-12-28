@@ -106,11 +106,8 @@ if __name__ == "__main__":
         )
     logger = logging.getLogger(__name__)
 
-    # specify players to test
-    players = [
-        PlayerRandom(),
-        PlayerModal(),
-    ]
+    # set up queue
+    queue = Queue()
 
     # connect to db
     engine = create_engine(URL.create(
