@@ -1,0 +1,7 @@
+# confidential
+.env
+
+# working
+app/working
+app/copy_to_prod.sh
+db/data
