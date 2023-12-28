@@ -12,6 +12,8 @@ from pathlib import Path
 
 # mp
 from concurrent.futures import ThreadPoolExecutor
+from threading import Thread
+from queue import Queue
 
 # data
 import numpy as np
@@ -78,21 +80,36 @@ def play_one_game(player, con):
             'state_initial': state_initial,
             'state_end': state_end,
         }
-
-    ## save data to db
     data = pd.DataFrame([d_data])
-    data.to_sql(
-        name = "simulations",
-        con = con,
-        if_exists = "append",
-        index = False,
-        dtype={
-            'state_initial': JSON,
-            'state_end': JSON,
-            },
-    )
 
-    return
+    return data
+
+def consume():
+    '''
+    consumer: listen on the queue and write to db
+    '''
+    
+    # listen and write
+    while True:
+        if not queue.empty():
+
+            # get object to write
+            i = queue.get()
+            
+            # write
+            if i == TERMINATION_SIGNAL:
+                return
+            else:
+                i.to_sql(
+                    name = "simulations",
+                    con = con,
+                    if_exists = "append",
+                    index = False,
+                    dtype={
+                        'state_initial': JSON,
+                        'state_end': JSON,
+                        },
+                )
 
 if __name__ == "__main__":
 
@@ -108,6 +125,11 @@ if __name__ == "__main__":
 
     # set up queue
     queue = Queue()
+
+    # start consumer
+    consumer = Thread(target=consume)
+    consumer.daemon = True
+    consumer.start()
 
     # connect to db
     engine = create_engine(URL.create(
