@@ -111,6 +111,18 @@ def consume():
                         },
                 )
 
+def produce(i):
+    '''
+    prodcer: either get data OR send termination signal
+    '''
+    
+    if i == TERMINATION_SIGNAL:
+        # terminate
+        queue.put(TERMINATION_SIGNAL)
+    else:
+        # get data
+        queue.put(play_one_game())
+
 if __name__ == "__main__":
 
     # set up logging
