@@ -2,9 +2,12 @@
 simulate a made-up card game
 
 # Executive Summary
-* we can increase the number of simulations per second from about 0.5 to about 100.0 (a 200x improvement)
-* educated guessing (i.e., counting cards) - the best one could do without cheating - wins about 11% of the time
-* choosing the most extreme card (e.g., the highest) and simply guessing in the appropriate direction (e.g., lower) wins about 6% of the time
+* process
+   * we can increase the number of simulations per second from about 0.5 to about 100.0 (a 200x improvement)
+* game
+   * educated guessing (i.e., counting cards) - the best one could do without cheating - wins about 11% of the time
+   * choosing the most extreme card (e.g., the highest) and simply guessing in the appropriate direction (e.g., lower) wins about 6% of the time
+   * if you win, on average, you're left with just 2 lives (i.e., you use up 7 out of 9) and leave about 14 cards in the Draw Pile
 
 # The Game
 Refer to this doc ([link](app/game/README.md)) for the game's objective and rules.
