@@ -10,7 +10,8 @@ RUN apt-get update \
 
 # set up working dir
 USER jovyan
-WORKDIR /home/jovyan/work
+WORKDIR /home/jovyan/app
+# WORKDIR /home/jovyan/working
 
 # install requirements
 COPY ./requirements.txt .
@@ -18,7 +19,7 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # run app
-COPY ./game .
+COPY ./game ./game
 COPY ./constants.py .
 COPY ./simulations.py .
 CMD ["python", "simulations.py"]
