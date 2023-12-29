@@ -169,3 +169,56 @@ class PlayerModal(Player):
 
     def __str__(self):
         return f"PlayerModal()"
+
+class PlayerExtreme(Player):
+    '''
+    player that picks the extremest card
+    and guesses accordingly
+    '''
+
+    def pick_stack(self, game: Game):
+        '''
+        pick stack with the most extreme value
+        '''
+
+        # get top card's value for alive stacks
+        d = {idx:RANKS[stack[-1].value] for idx, stack in game.gauntlet.items() if stack.is_alive}  # can only guess on alive stacks
+        
+        # find extremes
+        idx_min = min(d, key=d.get)
+        min_val = d[idx_min]
+        idx_max = max(d, key=d.get)
+        max_val = d[idx_max]
+
+        # pick
+        ranks_min = RANKS[min(RANKS, key=RANKS.get)]
+        ranks_max = RANKS[max(RANKS, key=RANKS.get)]
+        if (min_val - ranks_min) < (ranks_max - max_val):
+            # lowest card in gauntlet is closer to lowest rank
+            # than the highest card in gauntlet is close to highest rank
+            return (idx_min, True)  # True = pick higher
+        else:
+            # highest card in gauntlet is closer to (or same dist) to lowest rank
+            # than the lowest card in gauntlet is close to lowest rank
+            return (idx_max, False)  # False = pick lower
+
+    def guess(self, game: Game):
+        '''
+        guess just based on whether
+        the extreme was the lowest (then guess higher) or
+        the extreme was the highest (then guess lower)
+        '''
+
+        # pick stack
+        idx_extreme, higher = self.pick_stack(game)
+
+        # parse
+        if higher:
+            guess = Guess.higher
+        else:
+            guess = Guess.lower
+
+        return (idx_extreme, guess)
+
+    def __str__(self):
+        return f"PlayerExtreme()"

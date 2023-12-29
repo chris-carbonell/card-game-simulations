@@ -34,9 +34,11 @@ from constants import *
 
 # specify players to test
 PLAYERS = [
+    PlayerExtreme(),
     PlayerRandom(),
     PlayerModal(),
 ]
+
 
 # Funcs
 
