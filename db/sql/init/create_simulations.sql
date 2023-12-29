@@ -7,6 +7,6 @@ CREATE TABLE IF NOT EXISTS simulations (
     turns SMALLINT,
     lives SMALLINT,
     len_deck SMALLINT,
-    state_initial JSON,
-    state_end JSON
+    state_initial JSONB,
+    state_end JSONB
 );
