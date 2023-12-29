@@ -1,19 +1,25 @@
 # Overview
-simulate a made-up card game to feel better about losing
+simulate a made-up card game
 
-# Rules
+# The Game
+Refer to this doc ([link](app/game/README.md)) for the game's objective and rules.
 
-This is basically a one person game. The player - <b>the Guesser</b> - guesses cards. Another player - <b>the Dealer</b> - simply deals the cards.
-1. The Dealer deals 9 cards face down in a line to form the Gauntlet.
-1. The Dealer flips over the first (leftmost) card in the Gauntlet.
-1. The Guesser guesses if the next card (the second card from the left) is higher or lower than the first card.
-    * If the Guesser guesses correctly, play continues with the third card, fourth card, and so on.
-    * If the Guesser guess incorrectly, all but the first card are replenished with face down cards.
-        * If the next card ties the prior card (e.g., they're both aces), the Guesser guessed incorrectly.
-1. The Guesser wins if they correctly guess higher or lower on all of the 8 cards. The Guesser loses if they run out of cards to replenish the Gauntlet.
+# Why?
+* determine the probability of winning to feel better about losing
+    * compare random guessing to educated guessing
+* figure out how to efficiently simulate <b>two million</b> games by taking advantage of:
+    * a PostgresSQL db in a Docker container
+        * using a db simplified the coding around concurrent events (e.g., saving data) 
+    * multiprocessing in Python (my server has 4 CPUs)
+        * I reserved one CPU for the consumer so I boosted the speed of the simulations by about 3 times.
+    * consumer-producer pattern
+        * allowing each producer to focus on just simulating games doubled simulation speed
 
 # Questions
-1. What's the probability of the Guesser winning if they guess randomly?
-1. What's the probability of the Guesser winning if they remember every card played so far?
-    * The Guesser would then know the probability of the next card being higher or lower and could guess accordingly.
-    * The Guesser would obviously not know the actual value of the next card.
+1. What's the probability of the Player winning if they guess randomly?
+1. What's the probability of the Player winning if they remember every card played so far?
+    * The Player would then know the probability of the next card from the Draw Pile being higher or lower and could guess accordingly.
+    * The Player would obviously not know the actual value of the next card from the Draw Pile.
+
+# Roadmap
+* clean up logging
