@@ -12,6 +12,8 @@ from pathlib import Path
 
 # mp
 from concurrent.futures import ThreadPoolExecutor
+from threading import Thread
+from queue import Queue
 
 # data
 import numpy as np
@@ -26,14 +28,21 @@ from game.player import *
 # constants
 from constants import *
 
+# Setup
+
+# specify players to test
+PLAYERS = [
+    PlayerRandom(),
+    PlayerModal(),
+]
+
 # Funcs
 
-def play_one_game(player, con):
+def play_one_game(player):
     '''
     play one game
 
     player = player playing the game
-    con = SQLAlchemy connection
     '''
 
     # set up game
@@ -70,21 +79,67 @@ def play_one_game(player, con):
             'state_initial': state_initial,
             'state_end': state_end,
         }
-
-    ## save data to db
     data = pd.DataFrame([d_data])
-    data.to_sql(
-        name = "simulations",
-        con = con,
-        if_exists = "append",
-        index = False,
-        dtype={
-            'state_initial': JSON,
-            'state_end': JSON,
-            },
-    )
 
-    return
+    return data
+
+def consume():
+    '''
+    consumer: listen on the queue and write to db
+    '''
+
+    # connect to db
+    engine = create_engine(URL.create(
+        drivername = "postgresql+psycopg2",
+        host = os.environ['POSTGRES_HOST'], 
+        port = os.environ['POSTGRES_PORT'], 
+        database = os.environ['POSTGRES_DB'], 
+        username = os.environ['POSTGRES_USER'], 
+        password = os.environ['POSTGRES_PASSWORD'],
+    ))
+    with engine.connect() as con:
+    
+        # listen and write
+        while True:
+            if not queue.empty():
+
+                # get object to write
+                i = queue.get()
+                
+                # write
+                if isinstance(i, type(TERMINATION_SIGNAL)) and i == TERMINATION_SIGNAL:
+                    # terminate
+                    break
+                elif isinstance(i, pd.DataFrame):
+                    # write data
+                    i.to_sql(
+                        name = "simulations",
+                        con = con,
+                        if_exists = "append",
+                        index = False,
+                        dtype={
+                            'state_initial': JSON,
+                            'state_end': JSON,
+                            },
+                    )
+                else:
+                    raise TypeError(f"unsupported type ({type(i)})")
+
+def produce(i):
+    '''
+    prodcer: either get data OR send termination signal
+
+    i = player or termination signal
+    '''
+    
+    if isinstance(i, type(TERMINATION_SIGNAL)) and i == TERMINATION_SIGNAL:
+        # terminate
+        queue.put(TERMINATION_SIGNAL)
+    elif isinstance(i, Player):
+        # get data
+        queue.put(play_one_game(i))
+    else:
+        raise TypeError(f"unsupported type ({type(i)})")
 
 if __name__ == "__main__":
 
@@ -98,28 +153,25 @@ if __name__ == "__main__":
         )
     logger = logging.getLogger(__name__)
 
-    # specify players to test
-    players = [
-        PlayerRandom(),
-        PlayerModal(),
-    ]
+    # set up queue
+    queue = Queue()  # hold data for consumer to upload
 
-    # connect to db
-    engine = create_engine(URL.create(
-        drivername = "postgresql+psycopg2",
-        host = os.environ['POSTGRES_HOST'], 
-        port = os.environ['POSTGRES_PORT'], 
-        database = os.environ['POSTGRES_DB'], 
-        username = os.environ['POSTGRES_USER'], 
-        password = os.environ['POSTGRES_PASSWORD'],
-    ))
-    with engine.connect() as con:
+    # start consumer
+    consumer = Thread(target=consume)
+    consumer.daemon = True
+    consumer.start()
 
-        # with a pool executor
-        # loop over players and number of simulations
-        with ThreadPoolExecutor(max_workers = MAX_WORKERS) as executor:
-            for idx, player in enumerate(players):
-                for i in range(NUM_SIMULATIONS):
+    # with a pool executor
+    # loop over players and number of simulations
+    with ThreadPoolExecutor(max_workers = MAX_WORKERS) as executor:
+        
+        # submit jobs for each simulation
+        for player in PLAYERS:
+            for i in range(NUM_SIMULATIONS):
+                executor.submit(produce, player)  # play one game
 
-                    # play one game
-                    executor.submit(play_one_game, player, con)
+        # after all legit jobs, send termination signal
+        executor.submit(produce, TERMINATION_SIGNAL)
+
+    # wait for jobs
+    consumer.join()
