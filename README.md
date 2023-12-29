@@ -9,6 +9,13 @@ simulate a made-up card game
    * choosing the most extreme card (e.g., the highest) and simply guessing in the appropriate direction (e.g., lower) wins about <b>5.6</b>% of the time
    * if you win, on average, you're <b>left with just 2 lives</b> (i.e., you use up 7 out of 9)
    * if you lose, on average, you leave about 14 cards in the Draw Pile
+   * more extreme cards increase the Player's probability of winning
+        * for the extreme player
+            * the probability of winning with little to no extreme cards was about 3%
+            * the probability of winning with all or many extreme cards was about 13%
+        * for the educated player
+            * the probability of winning with little to no extreme cards was about 9%
+            * the probability of winning with all or many extreme cards was about 25%
 
 # The Game
 Refer to this doc ([link](app/game/README.md)) for the game's objective and rules.
