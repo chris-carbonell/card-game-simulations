@@ -35,8 +35,8 @@ from constants import *
 # specify players to test
 PLAYERS = [
     PlayerExtreme(),
-    PlayerRandom(),
     PlayerModal(),
+    # PlayerRandom(), # this one never wins!
 ]
 
 
