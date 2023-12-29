@@ -9,7 +9,8 @@ import multiprocessing
 
 # Constants
 
-NUM_SIMULATIONS = 10000
+NUM_SIMULATIONS = 10**6
+CHUNK_SIZE = 10**4
 
 PATH_OUTPUT_LOG = f"./logs/simulations.log"
 

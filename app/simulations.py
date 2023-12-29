@@ -5,13 +5,14 @@
 
 # general
 from datetime import datetime
+from more_itertools import batched
 import json
 import logging
 import os
 from pathlib import Path
 
 # mp
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, wait
 import multiprocessing as mp
 from threading import Thread
 from queue import Queue
@@ -165,12 +166,15 @@ if __name__ == "__main__":
 
     # with a pool executor
     # loop over players and number of simulations
+    rng = range(NUM_SIMULATIONS)
     with ProcessPoolExecutor(max_workers = MAX_WORKERS) as executor:
         
         # submit jobs for each simulation
         for player in PLAYERS:
-            for i in range(NUM_SIMULATIONS):
-                executor.submit(produce, player)  # play one game
+            batches = batched(rng, CHUNK_SIZE)
+            for batch in batches:
+                futures = [executor.submit(produce, player) for i in batch]
+                wait(futures)  # wait for this batch to finish
 
         # after all legit jobs, send termination signal
         executor.submit(produce, TERMINATION_SIGNAL)
