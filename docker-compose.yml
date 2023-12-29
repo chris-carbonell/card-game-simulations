@@ -52,7 +52,8 @@ services:
       - "${PORT_APP}:8888"
     
     volumes:
-      - ./app/working:/home/jovyan/work
+      - ./app/working:/home/jovyan/work  # dev
+      - ./app/logs:/home/jovyan/app/logs  # prod logs
 
     depends_on:
       db:
