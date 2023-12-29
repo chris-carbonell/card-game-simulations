@@ -4,6 +4,7 @@
 # working
 app/working
 app/copy_to_prod.sh
+app/logs
 db/data
 
 # python
