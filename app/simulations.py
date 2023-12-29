@@ -12,6 +12,7 @@ from pathlib import Path
 
 # mp
 from concurrent.futures import ProcessPoolExecutor
+import multiprocessing as mp
 from threading import Thread
 from queue import Queue
 
@@ -146,7 +147,7 @@ if __name__ == "__main__":
     # set up logging
     logging.basicConfig(
         filename=PATH_OUTPUT_LOG,
-        filemode="w",
+        filemode="a",
         format="%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s",
         datefmt="%H:%M:%S",
         level=logging.DEBUG,
@@ -154,7 +155,8 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
 
     # set up queue
-    queue = Queue()  # hold data for consumer to upload
+    manager = mp.Manager()
+    queue = manager.Queue()
 
     # start consumer
     consumer = Thread(target=consume)
