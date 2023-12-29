@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 
 # mp
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from threading import Thread
 from queue import Queue
 
@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     # with a pool executor
     # loop over players and number of simulations
-    with ThreadPoolExecutor(max_workers = MAX_WORKERS) as executor:
+    with ProcessPoolExecutor(max_workers = MAX_WORKERS) as executor:
         
         # submit jobs for each simulation
         for player in PLAYERS:
