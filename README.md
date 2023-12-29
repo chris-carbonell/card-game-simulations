@@ -7,7 +7,8 @@ simulate a made-up card game
 * game
    * educated guessing (i.e., counting cards) - the best one could do without cheating - wins about <b>11.2%</b> of the time
    * choosing the most extreme card (e.g., the highest) and simply guessing in the appropriate direction (e.g., lower) wins about <b>5.6</b>% of the time
-   * if you win, on average, you're <b>left with just 2 lives</b> (i.e., you use up 7 out of 9) and leave about 14 cards in the Draw Pile
+   * if you win, on average, you're <b>left with just 2 lives</b> (i.e., you use up 7 out of 9)
+   * if you lose, on average, you leave about 14 cards in the Draw Pile
 
 # The Game
 Refer to this doc ([link](app/game/README.md)) for the game's objective and rules.
