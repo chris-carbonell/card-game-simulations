@@ -9,9 +9,9 @@ import multiprocessing
 
 # Constants
 
-NUM_SIMULATIONS = 1000000
+NUM_SIMULATIONS = 10000
 
-PATH_OUTPUT_LOG = f"./logs/{datetime.now().strftime('%Y-%m-%d %H%M%S')}.log"
+PATH_OUTPUT_LOG = f"./logs/simulations.log"
 
 MAX_WORKERS = multiprocessing.cpu_count()
 
