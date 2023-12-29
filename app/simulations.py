@@ -172,9 +172,9 @@ if __name__ == "__main__":
     with ProcessPoolExecutor(max_workers = MAX_WORKERS) as executor:
         
         # submit jobs for each simulation
-        for player in PLAYERS:
-            batches = batched(rng, CHUNK_SIZE)
-            for batch in batches:
+        batches = batched(rng, CHUNK_SIZE)
+        for batch in batches:
+            for player in PLAYERS:
                 futures = [executor.submit(produce, player) for i in batch]
                 wait(futures)  # wait for this batch to finish
 
